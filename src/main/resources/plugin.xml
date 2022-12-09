@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+    <extension id="ExportToCypher"
+               point="org.protege.editor.core.application.EditorKitMenuAction">
+        <name value="Export to Cypher"/>
+        <class value="ui.ExportToCypherAction"/>
+        <toolTip value="Export ontology to a text file which contains Cypher statements."/>
+        <path value="org.protege.editor.owl.menu.tools/SlotQ-A"/>
+        <editorKitId value="OWLEditorKit"/>
+    </extension>
+</plugin>
