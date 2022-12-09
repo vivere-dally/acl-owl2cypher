@@ -1,4 +1,4 @@
-package converter;
+package sbuciu.converter;
 
 import lombok.extern.slf4j.Slf4j;
 import org.semanticweb.owlapi.model.*;
