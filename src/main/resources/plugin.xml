@@ -2,9 +2,9 @@
 <plugin>
     <extension id="ExportToCypher" point="org.protege.editor.core.application.EditorKitMenuAction">
         <name value="Export to Cypher"/>
-        <path value="org.protege.editor.owl.menu.tools/SlotG-A"/>
+        <path value="org.protege.editor.owl.menu.tools/SlotQ-B"/>
         <toolTip value="Export ontology to a text file which contains Cypher statements."/>
-        <class value="sbuciu.ui.ExportToCypherAction"/>
-        <editorKitId value="any"/>
+        <class value="edu.stanford.protege.sbuciu.ui.ExportToCypherAction"/>
+        <editorKitId value="OWLEditorKit"/>
     </extension>
 </plugin>

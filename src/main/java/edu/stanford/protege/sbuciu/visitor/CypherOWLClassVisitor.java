@@ -1,99 +1,22 @@
-package sbuciu.converter;
+package edu.stanford.protege.sbuciu.visitor;
 
-import lombok.extern.slf4j.Slf4j;
+import edu.stanford.protege.sbuciu.model.CypherData;
 import org.semanticweb.owlapi.model.*;
 
 import javax.annotation.Nonnull;
 
-@Slf4j
-public class MyOWLObjectVisitor implements OWLObjectVisitor {
+public class CypherOWLClassVisitor implements OWLObjectVisitor {
+    private final CypherData data;
+
+    public CypherOWLClassVisitor(CypherData data) {
+        this.data = data;
+    }
 
     @Override
-    public void visit(@Nonnull OWLClass owlClass) {
-        if (owlClass.isOWLThing() || owlClass.isOWLNothing()) {
+    public void visit(@Nonnull OWLClass value) {
+        if (value.isAnonymous()) {
             return;
         }
-
-        if (owlClass.isAnonymous()) {
-            log.info("Anonymous OWLClass {}", owlClass);
-            return;
-        }
-
-        // TODO: add class
-        log.info("OWLClass IRI {}", owlClass.getIRI());
-    }
-
-    @Override
-    public void visit(@Nonnull OWLDatatype owlDatatype) {
-        if (owlDatatype.getIRI().toString().equals("http://www.w3.org/2000/01/rdf-schema#Literal")) {
-            return;
-        }
-
-        // TODO: add data type
-        log.info("OWLDataType IRI {}", owlDatatype.getIRI());
-    }
-
-    @Override
-    public void visit(@Nonnull OWLObjectProperty owlObjectProperty) {
-        if (owlObjectProperty.isAnonymous()) {
-            log.info("Anonymous OWLObjectProperty {}", owlObjectProperty);
-            return;
-        }
-
-        // TODO: add object property
-        log.info("OWLObjectProperty IRI {}", owlObjectProperty.getIRI());
-    }
-
-    @Override
-    public void visit(@Nonnull OWLDataProperty owlDataProperty) {
-        if (owlDataProperty.isAnonymous()) {
-            log.info("Anonymous OWLDataProperty {}", owlDataProperty);
-            return;
-        }
-
-        // TODO: add data property
-        log.info("OWLDataProperty IRI {}", owlDataProperty.getIRI());
-    }
-
-//    The remaining methods are not implemented
-
-    @Override
-    public void visit(@Nonnull OWLAnnotation owlAnnotation) {
-
-    }
-
-    @Override
-    public void visit(@Nonnull OWLDeclarationAxiom owlDeclarationAxiom) {
-
-    }
-
-    @Override
-    public void visit(@Nonnull OWLDatatypeDefinitionAxiom owlDatatypeDefinitionAxiom) {
-
-    }
-
-    @Override
-    public void visit(@Nonnull OWLAnnotationAssertionAxiom owlAnnotationAssertionAxiom) {
-
-    }
-
-    @Override
-    public void visit(@Nonnull OWLSubAnnotationPropertyOfAxiom owlSubAnnotationPropertyOfAxiom) {
-
-    }
-
-    @Override
-    public void visit(@Nonnull OWLAnnotationPropertyDomainAxiom owlAnnotationPropertyDomainAxiom) {
-
-    }
-
-    @Override
-    public void visit(@Nonnull OWLAnnotationPropertyRangeAxiom owlAnnotationPropertyRangeAxiom) {
-
-    }
-
-    @Override
-    public void visit(@Nonnull IRI iri) {
 
     }
 
@@ -198,37 +121,32 @@ public class MyOWLObjectVisitor implements OWLObjectVisitor {
     }
 
     @Override
-    public void visit(@Nonnull OWLLiteral owlLiteral) {
+    public void visit(@Nonnull OWLDeclarationAxiom owlDeclarationAxiom) {
 
     }
 
     @Override
-    public void visit(@Nonnull OWLFacetRestriction owlFacetRestriction) {
+    public void visit(@Nonnull OWLDatatypeDefinitionAxiom owlDatatypeDefinitionAxiom) {
 
     }
 
     @Override
-    public void visit(@Nonnull OWLDataOneOf owlDataOneOf) {
+    public void visit(@Nonnull OWLAnnotationAssertionAxiom owlAnnotationAssertionAxiom) {
 
     }
 
     @Override
-    public void visit(@Nonnull OWLDataComplementOf owlDataComplementOf) {
+    public void visit(@Nonnull OWLSubAnnotationPropertyOfAxiom owlSubAnnotationPropertyOfAxiom) {
 
     }
 
     @Override
-    public void visit(@Nonnull OWLDataIntersectionOf owlDataIntersectionOf) {
+    public void visit(@Nonnull OWLAnnotationPropertyDomainAxiom owlAnnotationPropertyDomainAxiom) {
 
     }
 
     @Override
-    public void visit(@Nonnull OWLDataUnionOf owlDataUnionOf) {
-
-    }
-
-    @Override
-    public void visit(@Nonnull OWLDatatypeRestriction owlDatatypeRestriction) {
+    public void visit(@Nonnull OWLAnnotationPropertyRangeAxiom owlAnnotationPropertyRangeAxiom) {
 
     }
 
@@ -448,7 +366,67 @@ public class MyOWLObjectVisitor implements OWLObjectVisitor {
     }
 
     @Override
+    public void visit(@Nonnull OWLAnnotation owlAnnotation) {
+
+    }
+
+    @Override
+    public void visit(@Nonnull IRI iri) {
+
+    }
+
+    @Override
+    public void visit(@Nonnull OWLLiteral owlLiteral) {
+
+    }
+
+    @Override
+    public void visit(@Nonnull OWLFacetRestriction owlFacetRestriction) {
+
+    }
+
+    @Override
+    public void visit(@Nonnull OWLDatatype owlDatatype) {
+
+    }
+
+    @Override
+    public void visit(@Nonnull OWLDataOneOf owlDataOneOf) {
+
+    }
+
+    @Override
+    public void visit(@Nonnull OWLDataComplementOf owlDataComplementOf) {
+
+    }
+
+    @Override
+    public void visit(@Nonnull OWLDataIntersectionOf owlDataIntersectionOf) {
+
+    }
+
+    @Override
+    public void visit(@Nonnull OWLDataUnionOf owlDataUnionOf) {
+
+    }
+
+    @Override
+    public void visit(@Nonnull OWLDatatypeRestriction owlDatatypeRestriction) {
+
+    }
+
+    @Override
+    public void visit(@Nonnull OWLObjectProperty owlObjectProperty) {
+
+    }
+
+    @Override
     public void visit(@Nonnull OWLObjectInverseOf owlObjectInverseOf) {
+
+    }
+
+    @Override
+    public void visit(@Nonnull OWLDataProperty owlDataProperty) {
 
     }
 
@@ -456,6 +434,4 @@ public class MyOWLObjectVisitor implements OWLObjectVisitor {
     public void visit(@Nonnull OWLAnnotationProperty owlAnnotationProperty) {
 
     }
-
-
 }

@@ -1,15 +1,17 @@
-package sbuciu.ui;
+package edu.stanford.protege.sbuciu.ui;
 
-import sbuciu.converter.OntologyConverter;
-import lombok.extern.slf4j.Slf4j;
+import edu.stanford.protege.sbuciu.converter.OntologyConverter;
 import org.protege.editor.owl.ui.action.ProtegeOWLAction;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 import java.awt.event.ActionEvent;
 
-@Slf4j
 public class ExportToCypherAction extends ProtegeOWLAction {
+    private static final long serialVersionUID = 1753770760598088272L;
+    private static final Logger log = LoggerFactory.getLogger(ExportToCypherAction.class);
 
     @Override
     public void actionPerformed(ActionEvent e) {
