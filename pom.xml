@@ -48,6 +48,25 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.1.1</version>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
             <plugin>
                 <groupId>org.apache.felix</groupId>
@@ -56,27 +75,40 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Bundle-Activator>org.protege.editor.owl.ProtegeOWL</Bundle-Activator>
+                        <!--                        <Bundle-Activator>org.protege.editor.owl.ProtegeOWL</Bundle-Activator>-->
                         <Bundle-SymbolicName>${project.artifactId};singleton:=true</Bundle-SymbolicName>
                         <Bundle-Vendor>edu.stanford.protege.sbuciu</Bundle-Vendor>
                         <Bundle-ClassPath>.</Bundle-ClassPath>
                         <Export-Package>
-                            edu.stanford.protege.sbuciu.*
+                            edu.stanford.protege.sbuciu.*,
+                            org.neo4j.cypherdsl.core,
+                            neo4j-cypher-dsl
                         </Export-Package>
                         <Import-Package>
+                            <!--                            neo4j-cypher-dsl,-->
+                            org.neo4j.cypherdsl.core,
+                            neo4j-cypher-dsl,
                             org.protege.editor.owl.*;version="5.0.0", <!-- equivalent to [5.0.0,infinity) -->
                             *
                         </Import-Package>
-                        <Include-Resource>{maven-resources}</Include-Resource>
-                        <executions>
-                            <execution>
-                                <id>bundle-manifest</id>
-                                <phase>install</phase>
-                                <goals>
-                                    <goal>manifest</goal>
-                                </goals>
-                            </execution>
-                        </executions>
+                        <Include-Resource>
+                            {maven-resources},
+                            {maven-dependencies},
+                            neo4j-cypher-dsl-2022.8.1.jar
+                        </Include-Resource>
+                        <Embed-Dependency>neo4j-cypher-dsl</Embed-Dependency>
+                        <!--                        <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>-->
+                        <!--                        org.neo4j.cypherdsl.core -->
+                        <!--                        <Embed-Transitive>true</Embed-Transitive>-->
+                        <!--                        <executions>-->
+                        <!--                            <execution>-->
+                        <!--                                <id>bundle-manifest</id>-->
+                        <!--                                <phase>install</phase>-->
+                        <!--                                <goals>-->
+                        <!--                                    <goal>manifest</goal>-->
+                        <!--                                </goals>-->
+                        <!--                            </execution>-->
+                        <!--                        </executions>-->
                     </instructions>
                 </configuration>
             </plugin>

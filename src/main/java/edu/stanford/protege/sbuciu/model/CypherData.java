@@ -1,9 +1,6 @@
 package edu.stanford.protege.sbuciu.model;
 
-import edu.stanford.protege.sbuciu.model.nodes.AnnotationPropertyNode;
-import edu.stanford.protege.sbuciu.model.nodes.ClassNode;
-import edu.stanford.protege.sbuciu.model.nodes.DatatypeNode;
-import edu.stanford.protege.sbuciu.model.nodes.IndividualNode;
+import edu.stanford.protege.sbuciu.model.nodes.*;
 import org.semanticweb.owlapi.model.IRI;
 
 import java.util.HashMap;
@@ -13,16 +10,22 @@ public class CypherData {
     private final Map<String, Map<String, String>> axioms;
 
     //    Ontology global annotation properties
-    public final Map<IRI, AnnotationPropertyNode> annotationProperties = new HashMap<>();
+    public final Map<IRI, AnnotationPropertyCypherNode> annotationProperties = new HashMap<>();
 
     //    Classes
-    public final Map<IRI, ClassNode> classes = new HashMap<>();
+    public final Map<IRI, ClassCypherNode> classes = new HashMap<>();
 
     //    Data types
-    public final Map<IRI, DatatypeNode> dataTypes = new HashMap<>();
+    public final Map<IRI, DatatypeCypherNode> dataTypes = new HashMap<>();
 
     //    Individuals
-    public final Map<IRI, IndividualNode> individuals = new HashMap<>();
+    public final Map<IRI, IndividualCypherNode> individuals = new HashMap<>();
+
+    //    Object Properties
+    public final Map<IRI, ObjectPropertyCypherNode> objectProperties = new HashMap<>();
+
+    //    Data Properties
+    public final Map<IRI, DataPropertyCypherNode> dataProperties = new HashMap<>();
 
     public CypherData() {
         axioms = new HashMap<>();

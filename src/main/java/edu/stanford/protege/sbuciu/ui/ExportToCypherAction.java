@@ -1,6 +1,8 @@
 package edu.stanford.protege.sbuciu.ui;
 
-import edu.stanford.protege.sbuciu.converter.OntologyConverter;
+import edu.stanford.protege.sbuciu.converter.CypherWriter;
+import edu.stanford.protege.sbuciu.converter.OntologyMiner;
+import edu.stanford.protege.sbuciu.model.CypherData;
 import org.protege.editor.owl.ui.action.ProtegeOWLAction;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
@@ -20,8 +22,13 @@ public class ExportToCypherAction extends ProtegeOWLAction {
         final String logOntoName = owlOntology.isAnonymous() ? "Anonymous" : owlOntology.getOntologyID().getOntologyIRI().get().toString();
 
         log.info("Converting ontology {}", logOntoName);
-        final OntologyConverter converter = new OntologyConverter(owlOntology, owlOntologyManager);
-        converter.convert();
+
+        final OntologyMiner converter = new OntologyMiner(owlOntology, owlOntologyManager);
+        final CypherData data = converter.convert();
+
+        final CypherWriter writer = new CypherWriter(data);
+        writer.write("");
+
         log.info("Successful conversion");
     }
 
