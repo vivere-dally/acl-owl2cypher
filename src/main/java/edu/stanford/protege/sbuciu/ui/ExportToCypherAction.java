@@ -24,7 +24,7 @@ public class ExportToCypherAction extends ProtegeOWLAction {
         log.info("Converting ontology {}", logOntoName);
 
         final OntologyMiner converter = new OntologyMiner(owlOntology, owlOntologyManager);
-        final CypherData data = converter.convert();
+        final CypherData data = converter.mine();
 
         final CypherWriter writer = new CypherWriter(data);
         writer.write("");

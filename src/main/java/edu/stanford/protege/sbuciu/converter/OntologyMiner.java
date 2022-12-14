@@ -2,6 +2,9 @@ package edu.stanford.protege.sbuciu.converter;
 
 import edu.stanford.protege.sbuciu.model.CypherData;
 import edu.stanford.protege.sbuciu.model.nodes.*;
+import edu.stanford.protege.sbuciu.model.nodes2.CypherNode;
+import edu.stanford.protege.sbuciu.model.nodes2.CypherNodeType;
+import edu.stanford.protege.sbuciu.model.nodes2.CypherRelationship;
 import edu.stanford.protege.sbuciu.visitor.CypherDefaultOWLAxiomVisitor;
 import edu.stanford.protege.sbuciu.visitor.CypherOWLClassVisitor;
 import edu.stanford.protege.sbuciu.visitor.CypherOWLIndividualVisitor;
@@ -13,9 +16,7 @@ import org.semanticweb.owlapi.util.OWLOntologyWalker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class OntologyMiner {
     private static final Logger log = LoggerFactory.getLogger(OntologyMiner.class);
@@ -27,17 +28,16 @@ public class OntologyMiner {
     private final OWLOntology ontology;
     private final OWLOntologyManager manager;
     private final CypherData data = new CypherData();
+    private final Map<CypherNode, List<CypherRelationship>> m = new HashMap<>();
 
     public OntologyMiner(OWLOntology ontology, OWLOntologyManager manager) {
         this.ontology = ontology;
         this.manager = manager;
     }
 
-    public CypherData convert() {
-
-        log.info("converting...");
-
-        retrieveEntities();
+    public CypherData mine() {
+        mineEntities();
+        mineAnnotations();
 
 //        for (final OWLAxiom axiom : ontology.getAxioms(Imports.INCLUDED)) {
 //            log.info(axiom.toString());
@@ -50,13 +50,15 @@ public class OntologyMiner {
         return data;
     }
 
-    public void retrieveEntities() {
+    private void mineEntities() {
+        log.info("mining entities...");
         //        register annotation properties
         for (final OWLAnnotationProperty value : ontology.getAnnotationPropertiesInSignature(Imports.INCLUDED)) {
             if (value.isAnonymous()) {
                 continue;
             }
 
+            m.put(new CypherNode(value.getIRI(), CypherNodeType.ANNOTATION_PROPERTY), new ArrayList<>());
             data.annotationProperties.put(value.getIRI(), new AnnotationPropertyCypherNode(value));
         }
 
@@ -66,6 +68,7 @@ public class OntologyMiner {
                 continue;
             }
 
+            m.put(new CypherNode(value.getIRI(), CypherNodeType.CLASS), new ArrayList<>());
             data.classes.put(value.getIRI(), new ClassCypherNode(value));
         }
 
@@ -75,6 +78,7 @@ public class OntologyMiner {
                 continue;
             }
 
+            m.put(new CypherNode(value.getIRI(), CypherNodeType.DATA_TYPE), new ArrayList<>());
             data.dataTypes.put(value.getIRI(), new DatatypeCypherNode(value));
         }
 
@@ -83,6 +87,7 @@ public class OntologyMiner {
                 continue;
             }
 
+            m.put(new CypherNode(value.getIRI(), CypherNodeType.INDIVIDUAL), new ArrayList<>());
             data.individuals.put(value.getIRI(), new IndividualCypherNode(value));
         }
 
@@ -91,6 +96,7 @@ public class OntologyMiner {
                 continue;
             }
 
+            m.put(new CypherNode(value.getIRI(), CypherNodeType.OBJECT_PROPERTY), new ArrayList<>());
             data.objectProperties.put(value.getIRI(), new ObjectPropertyCypherNode(value));
         }
 
@@ -99,8 +105,33 @@ public class OntologyMiner {
                 continue;
             }
 
+            m.put(new CypherNode(value.getIRI(), CypherNodeType.DATA_PROPERTY), new ArrayList<>());
             data.dataProperties.put(value.getIRI(), new DataPropertyCypherNode(value));
         }
+    }
+
+    private void mineAnnotations() {
+        log.info("mining annotations...");
+
+
+        for (final OWLAxiom axiom : ontology.getAxioms(Imports.INCLUDED)) {
+            if (!(axiom instanceof OWLAnnotationAssertionAxiom)) {
+                continue;
+            }
+
+            final OWLAnnotationAssertionAxiom assertionAxiom = (OWLAnnotationAssertionAxiom) axiom;
+            data.putAnnotation(assertionAxiom.getProperty().getIRI(), (OWLAnnotation) assertionAxiom);
+        }
+
+//        for (final ClassCypherNode value : data.classes.values()) {
+//            for (final OWLAxiom axiom : ontology.getAxioms(value.owlClass, Imports.INCLUDED)) {
+//                if (!(axiom instanceof OWLAnnotationAssertionAxiom)) {
+//                    continue;
+//                }
+//
+//                value.annotations.add((OWLAnnotation) axiom);
+//            }
+//        }
     }
 
     private void preProcess() {

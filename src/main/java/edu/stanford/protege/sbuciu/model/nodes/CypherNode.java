@@ -17,7 +17,7 @@ public abstract class CypherNode {
         return getIRI().getIRI().toString();
     }
 
-    public String getShortForm() {
+    public String getDisplayName() {
         return getIRI().getIRI().getShortForm();
     }
 }

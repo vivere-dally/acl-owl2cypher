@@ -8,6 +8,8 @@ import org.neo4j.cypherdsl.core.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
+
 import static org.neo4j.cypherdsl.core.Cypher.*;
 
 public class CypherWriter {
@@ -24,10 +26,16 @@ public class CypherWriter {
     }
 
     private void writeEntities() {
-        for (final CypherNode node : data.classes.values()) {
-            final Node n = node(node.getName()).withProperties("iri", node.getIRIAsString(), "iriShort", node.getShortForm()).named("n");
-            final Statement s = Cypher.create(n).build();
-            log.info(s.getCypher());
+        for (final Collection<? extends CypherNode> nodes : data.getValues()) {
+            for (final CypherNode node : nodes) {
+                final Node n = node(node.getName())
+                        .named("n")
+                        .withProperties(
+                                "iri", literalOf(node.getIRIAsString()),
+                                "displayName", literalOf(node.getDisplayName()));
+                final Statement s = Cypher.create(n).build();
+                log.info(s.getCypher());
+            }
         }
     }
 }
