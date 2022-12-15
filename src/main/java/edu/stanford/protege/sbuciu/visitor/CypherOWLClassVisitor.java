@@ -1,16 +1,10 @@
 package edu.stanford.protege.sbuciu.visitor;
 
-import edu.stanford.protege.sbuciu.model.CypherData;
 import org.semanticweb.owlapi.model.*;
 
 import javax.annotation.Nonnull;
 
 public class CypherOWLClassVisitor implements OWLObjectVisitor {
-    private final CypherData data;
-
-    public CypherOWLClassVisitor(CypherData data) {
-        this.data = data;
-    }
 
     @Override
     public void visit(@Nonnull OWLClass value) {

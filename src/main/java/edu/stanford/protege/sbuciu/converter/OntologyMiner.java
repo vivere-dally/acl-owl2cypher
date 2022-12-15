@@ -1,12 +1,9 @@
 package edu.stanford.protege.sbuciu.converter;
 
-import edu.stanford.protege.sbuciu.model.CypherData;
-import edu.stanford.protege.sbuciu.model.nodes.*;
-import edu.stanford.protege.sbuciu.model.nodes2.CypherNode;
-import edu.stanford.protege.sbuciu.model.nodes2.CypherNodeType;
-import edu.stanford.protege.sbuciu.model.nodes2.CypherRelationship;
+import edu.stanford.protege.sbuciu.model.nodes.CypherNode;
+import edu.stanford.protege.sbuciu.model.nodes.CypherNodeType;
+import edu.stanford.protege.sbuciu.model.nodes.CypherRelationship;
 import edu.stanford.protege.sbuciu.visitor.CypherDefaultOWLAxiomVisitor;
-import edu.stanford.protege.sbuciu.visitor.CypherOWLClassVisitor;
 import edu.stanford.protege.sbuciu.visitor.CypherOWLIndividualVisitor;
 import edu.stanford.protege.sbuciu.visitor.CypherOWLObjectWalkerVisitor;
 import org.semanticweb.owlapi.model.*;
@@ -27,7 +24,6 @@ public class OntologyMiner {
 
     private final OWLOntology ontology;
     private final OWLOntologyManager manager;
-    private final CypherData data = new CypherData();
     private final Map<CypherNode, List<CypherRelationship>> m = new HashMap<>();
 
     public OntologyMiner(OWLOntology ontology, OWLOntologyManager manager) {
@@ -35,7 +31,7 @@ public class OntologyMiner {
         this.manager = manager;
     }
 
-    public CypherData mine() {
+    public Map<CypherNode, List<CypherRelationship>> mine() {
         mineEntities();
         mineAnnotations();
 
@@ -47,67 +43,73 @@ public class OntologyMiner {
 //        process();
 //        postProcess();
         log.info("done");
-        return data;
+        return m;
+    }
+
+    private <T extends OWLNamedObject> void mineGeneric(Set<T> s, CypherNodeType type) {
+        for (final T value : s) {
+            if (!value.isAnonymous()) {
+                m.put(new CypherNode(value.getIRI(), type), new ArrayList<>());
+            }
+        }
     }
 
     private void mineEntities() {
         log.info("mining entities...");
-        //        register annotation properties
-        for (final OWLAnnotationProperty value : ontology.getAnnotationPropertiesInSignature(Imports.INCLUDED)) {
-            if (value.isAnonymous()) {
-                continue;
-            }
-
-            m.put(new CypherNode(value.getIRI(), CypherNodeType.ANNOTATION_PROPERTY), new ArrayList<>());
-            data.annotationProperties.put(value.getIRI(), new AnnotationPropertyCypherNode(value));
-        }
-
-        //        register classes
-        for (final OWLClass value : ontology.getClassesInSignature(Imports.INCLUDED)) {
-            if (value.isAnonymous()) {
-                continue;
-            }
-
-            m.put(new CypherNode(value.getIRI(), CypherNodeType.CLASS), new ArrayList<>());
-            data.classes.put(value.getIRI(), new ClassCypherNode(value));
-        }
-
-        //        register data types
-        for (final OWLDatatype value : ontology.getDatatypesInSignature(Imports.INCLUDED)) {
-            if (value.isAnonymous()) {
-                continue;
-            }
-
-            m.put(new CypherNode(value.getIRI(), CypherNodeType.DATA_TYPE), new ArrayList<>());
-            data.dataTypes.put(value.getIRI(), new DatatypeCypherNode(value));
-        }
-
-        for (final OWLNamedIndividual value : ontology.getIndividualsInSignature(Imports.INCLUDED)) {
-            if (value.isAnonymous()) {
-                continue;
-            }
-
-            m.put(new CypherNode(value.getIRI(), CypherNodeType.INDIVIDUAL), new ArrayList<>());
-            data.individuals.put(value.getIRI(), new IndividualCypherNode(value));
-        }
-
-        for (final OWLObjectProperty value : ontology.getObjectPropertiesInSignature(Imports.INCLUDED)) {
-            if (value.isAnonymous()) {
-                continue;
-            }
-
-            m.put(new CypherNode(value.getIRI(), CypherNodeType.OBJECT_PROPERTY), new ArrayList<>());
-            data.objectProperties.put(value.getIRI(), new ObjectPropertyCypherNode(value));
-        }
-
-        for (final OWLDataProperty value : ontology.getDataPropertiesInSignature(Imports.INCLUDED)) {
-            if (value.isAnonymous()) {
-                continue;
-            }
-
-            m.put(new CypherNode(value.getIRI(), CypherNodeType.DATA_PROPERTY), new ArrayList<>());
-            data.dataProperties.put(value.getIRI(), new DataPropertyCypherNode(value));
-        }
+        mineGeneric(ontology.getAnnotationPropertiesInSignature(Imports.INCLUDED), CypherNodeType.ANNOTATION_PROPERTY);
+        mineGeneric(ontology.getClassesInSignature(Imports.INCLUDED), CypherNodeType.CLASS);
+        mineGeneric(ontology.getDatatypesInSignature(Imports.INCLUDED), CypherNodeType.DATA_TYPE);
+        mineGeneric(ontology.getIndividualsInSignature(Imports.INCLUDED), CypherNodeType.INDIVIDUAL);
+        mineGeneric(ontology.getObjectPropertiesInSignature(Imports.INCLUDED), CypherNodeType.OBJECT_PROPERTY);
+        mineGeneric(ontology.getDataPropertiesInSignature(Imports.INCLUDED), CypherNodeType.DATA_PROPERTY);
+//
+//        for (final OWLAnnotationProperty value : ontology.getAnnotationPropertiesInSignature(Imports.INCLUDED)) {
+//            if (value.isAnonymous()) {
+//                continue;
+//            }
+//
+//            m.put(new CypherNode(value.getIRI(), CypherNodeType.ANNOTATION_PROPERTY), new ArrayList<>());
+//        }
+//
+//        for (final OWLClass value : ontology.getClassesInSignature(Imports.INCLUDED)) {
+//            if (value.isAnonymous()) {
+//                continue;
+//            }
+//
+//            m.put(new CypherNode(value.getIRI(), CypherNodeType.CLASS), new ArrayList<>());
+//        }
+//
+//        for (final OWLDatatype value : ontology.getDatatypesInSignature(Imports.INCLUDED)) {
+//            if (value.isAnonymous()) {
+//                continue;
+//            }
+//
+//            m.put(new CypherNode(value.getIRI(), CypherNodeType.DATA_TYPE), new ArrayList<>());
+//        }
+//
+//        for (final OWLNamedIndividual value : ontology.getIndividualsInSignature(Imports.INCLUDED)) {
+//            if (value.isAnonymous()) {
+//                continue;
+//            }
+//
+//            m.put(new CypherNode(value.getIRI(), CypherNodeType.INDIVIDUAL), new ArrayList<>());
+//        }
+//
+//        for (final OWLObjectProperty value : ontology.getObjectPropertiesInSignature(Imports.INCLUDED)) {
+//            if (value.isAnonymous()) {
+//                continue;
+//            }
+//
+//            m.put(new CypherNode(value.getIRI(), CypherNodeType.OBJECT_PROPERTY), new ArrayList<>());
+//        }
+//
+//        for (final OWLDataProperty value : ontology.getDataPropertiesInSignature(Imports.INCLUDED)) {
+//            if (value.isAnonymous()) {
+//                continue;
+//            }
+//
+//            m.put(new CypherNode(value.getIRI(), CypherNodeType.DATA_PROPERTY), new ArrayList<>());
+//        }
     }
 
     private void mineAnnotations() {
@@ -120,7 +122,13 @@ public class OntologyMiner {
             }
 
             final OWLAnnotationAssertionAxiom assertionAxiom = (OWLAnnotationAssertionAxiom) axiom;
-            data.putAnnotation(assertionAxiom.getProperty().getIRI(), (OWLAnnotation) assertionAxiom);
+            final IRI from = ((IRI) assertionAxiom.getSubject());
+            final IRI to = assertionAxiom.getProperty().getIRI();
+            if (assertionAxiom.getValue().asLiteral().isPresent()) {
+                final OWLLiteral lit = assertionAxiom.getValue().asLiteral().get();
+            }
+
+            log.info("hm");
         }
 
 //        for (final ClassCypherNode value : data.classes.values()) {
@@ -155,7 +163,6 @@ public class OntologyMiner {
             final String subject = assertionAxiom.getSubject().toString();
             final String property = assertionAxiom.getProperty().getIRI().toString();
 
-            data.addAxiom(subject, property, value);
         }
 
         try {
@@ -205,8 +212,6 @@ public class OntologyMiner {
             for (final OWLClassAxiom axiom : ontology.getAxioms(clazz, Imports.INCLUDED)) {
                 try {
 //                    final CypherDefaultOWLAxiomVisitor visitor = new CypherDefaultOWLAxiomVisitor();
-                    final CypherOWLClassVisitor visitor = new CypherOWLClassVisitor(data);
-                    axiom.accept(visitor);
                 } catch (Exception ignored) {
                 }
             }

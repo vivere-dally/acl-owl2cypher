@@ -1,4 +1,4 @@
-package edu.stanford.protege.sbuciu.model.nodes2;
+package edu.stanford.protege.sbuciu.model.nodes;
 
 public enum CypherNodeType {
     INDIVIDUAL("individual"),

@@ -1,4 +1,4 @@
-package edu.stanford.protege.sbuciu.model.nodes2;
+package edu.stanford.protege.sbuciu.model.nodes;
 
 import org.neo4j.cypherdsl.core.Cypher;
 import org.neo4j.cypherdsl.core.Node;
