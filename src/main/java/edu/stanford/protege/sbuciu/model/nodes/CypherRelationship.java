@@ -21,26 +21,16 @@ public class CypherRelationship {
         this.type = CypherRelationshipType.TO;
     }
 
-    public CypherRelationship(String name, CypherNode to, CypherRelationshipType type) {
-        this.name = name;
-        this.to = to;
-        this.type = type;
-    }
+//    public CypherRelationship(String name, CypherNode to, CypherRelationshipType type) {
+//        this.name = name;
+//        this.to = to;
+//        this.type = type;
+//    }
 
     public String toCypher(CypherNode from) {
         Node nfrom = node(from.type.getType()).named("from").withProperties("iri", literalOf(from.iri.toString()));
         Node nto = node(to.type.getType()).named("to").withProperties("iri", literalOf(to.iri.toString()));
-        Relationship relationship;
-        switch (type) {
-            case BETWEEN:
-                relationship = nfrom.relationshipBetween(nto, name);
-                break;
-            case TO:
-            default:
-                relationship = nfrom.relationshipTo(nto, name);
-                break;
-        }
-
-        return Cypher.create(relationship.named("r").withProperties(properties)).build().getCypher();
+        Relationship relationship = nfrom.relationshipTo(nto, name).named("r").withProperties(properties);
+        return Cypher.match(nfrom, nto).create(relationship).build().getCypher();
     }
 }

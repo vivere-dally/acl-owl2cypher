@@ -61,13 +61,11 @@ public class ExportToCypherAction extends ProtegeOWLAction {
                 writer.newLine();
             }
 
-            int count = 0;
             for (final Map.Entry<CypherNode, P> e : m.entrySet()) {
                 for (final CypherRelationship r : e.getValue().rel) {
                     writer.write(r.toCypher(e.getKey()));
-                    if (count + 1 != m.size()) writer.write(';');
+                    writer.write(';');
                     writer.newLine();
-                    count += 1;
                 }
             }
         }

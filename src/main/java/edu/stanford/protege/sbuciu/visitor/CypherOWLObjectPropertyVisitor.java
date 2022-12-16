@@ -50,7 +50,8 @@ public class CypherOWLObjectPropertyVisitor extends CypherDefaultVisitor {
         final P b = m.get(CypherNode.of(axiom.getSecondProperty().asOWLObjectProperty().getIRI()));
         if (b == null) return;
 
-        a.rel.add(new CypherRelationship("HAS_INVERSE_OBJECT_PROPERTY", b.n, CypherRelationshipType.BETWEEN));
+        a.rel.add(new CypherRelationship("HAS_INVERSE_OBJECT_PROPERTY", b.n));
+        b.rel.add(new CypherRelationship("HAS_INVERSE_OBJECT_PROPERTY", a.n));
     }
 
     @Override
