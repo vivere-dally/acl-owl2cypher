@@ -4,12 +4,16 @@ import org.neo4j.cypherdsl.core.Cypher;
 import org.neo4j.cypherdsl.core.Node;
 import org.semanticweb.owlapi.model.IRI;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.neo4j.cypherdsl.core.Cypher.literalOf;
 import static org.neo4j.cypherdsl.core.Cypher.node;
 
 public class CypherNode {
     public final IRI iri;
     public final CypherNodeType type;
+    public final Map<String, Object> properties = new HashMap<>();
 
     public CypherNode(IRI iri, CypherNodeType type) {
         this.iri = iri;
@@ -17,13 +21,17 @@ public class CypherNode {
     }
 
     public String getCypher() {
+        properties.put("iriShortForm", literalOf(iri.getShortForm()));
+        properties.put("iri", literalOf(iri.toString()));
         final Node n = node(type.getType())
                 .named("n")
-                .withProperties(
-                        "iri", literalOf(iri.toString()),
-                        "iriShortForm", literalOf(iri.getShortForm()));
+                .withProperties(properties);
 
         return Cypher.create(n).build().getCypher();
+    }
+
+    public static CypherNode of(IRI iri) {
+        return new CypherNode(iri, null);
     }
 
     @Override

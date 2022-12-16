@@ -4,23 +4,43 @@ import org.neo4j.cypherdsl.core.Cypher;
 import org.neo4j.cypherdsl.core.Node;
 import org.neo4j.cypherdsl.core.Relationship;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.neo4j.cypherdsl.core.Cypher.*;
 
 public class CypherRelationship {
-    public final CypherRelationshipType type;
-    public final String value;
+    public final String name;
+    public final Map<String, Object> properties = new HashMap<>();
     public final CypherNode to;
+    public final CypherRelationshipType type;
 
-    public CypherRelationship(CypherRelationshipType type, String value, CypherNode to) {
-        this.type = type;
-        this.value = value;
+    public CypherRelationship(String name, CypherNode to) {
+        this.name = name;
         this.to = to;
+        this.type = CypherRelationshipType.TO;
+    }
+
+    public CypherRelationship(String name, CypherNode to, CypherRelationshipType type) {
+        this.name = name;
+        this.to = to;
+        this.type = type;
     }
 
     public String toCypher(CypherNode from) {
-        Node nfrom = node(from.type.getType()).named("from");
-        Node nto = node(to.type.getType()).named("to");
-        Relationship relationship = nfrom.relationshipTo(nto).named("r").withProperties(type.getType(), value);
-        return Cypher.create(relationship).build().getCypher();
+        Node nfrom = node(from.type.getType()).named("from").withProperties("iri", literalOf(from.iri.toString()));
+        Node nto = node(to.type.getType()).named("to").withProperties("iri", literalOf(to.iri.toString()));
+        Relationship relationship;
+        switch (type) {
+            case BETWEEN:
+                relationship = nfrom.relationshipBetween(nto, name);
+                break;
+            case TO:
+            default:
+                relationship = nfrom.relationshipTo(nto, name);
+                break;
+        }
+
+        return Cypher.create(relationship.named("r").withProperties(properties)).build().getCypher();
     }
 }

@@ -1,62 +1,18 @@
 package edu.stanford.protege.sbuciu.visitor;
 
+import edu.stanford.protege.sbuciu.model.nodes.CypherNode;
+import edu.stanford.protege.sbuciu.model.nodes.P;
 import org.semanticweb.owlapi.model.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import java.util.Map;
 
-public class CypherOWLObjectWalkerVisitor implements OWLObjectVisitor {
-    private static final Logger log = LoggerFactory.getLogger(CypherOWLObjectWalkerVisitor.class);
+public abstract class CypherDefaultVisitor implements OWLObjectVisitor {
+    protected final Map<CypherNode, P> m;
 
-    @Override
-    public void visit(@Nonnull OWLClass owlClass) {
-        if (owlClass.isOWLThing() || owlClass.isOWLNothing()) {
-            return;
-        }
-
-        if (owlClass.isAnonymous()) {
-            log.info("Anonymous OWLClass {}", owlClass);
-            return;
-        }
-
-        // TODO: add class
-        log.info("OWLClass IRI {}", owlClass.getIRI());
+    public CypherDefaultVisitor(Map<CypherNode, P> m) {
+        this.m = m;
     }
-
-    @Override
-    public void visit(@Nonnull OWLDatatype owlDatatype) {
-        if (owlDatatype.getIRI().toString().equals("http://www.w3.org/2000/01/rdf-schema#Literal")) {
-            return;
-        }
-
-        // TODO: add data type
-        log.info("OWLDataType IRI {}", owlDatatype.getIRI());
-    }
-
-    @Override
-    public void visit(@Nonnull OWLObjectProperty owlObjectProperty) {
-        if (owlObjectProperty.isAnonymous()) {
-            log.info("Anonymous OWLObjectProperty {}", owlObjectProperty);
-            return;
-        }
-
-        // TODO: add object property
-        log.info("OWLObjectProperty IRI {}", owlObjectProperty.getIRI());
-    }
-
-    @Override
-    public void visit(@Nonnull OWLDataProperty owlDataProperty) {
-        if (owlDataProperty.isAnonymous()) {
-            log.info("Anonymous OWLDataProperty {}", owlDataProperty);
-            return;
-        }
-
-        // TODO: add data property
-        log.info("OWLDataProperty IRI {}", owlDataProperty.getIRI());
-    }
-
-//    The remaining methods are not implemented
 
     @Override
     public void visit(@Nonnull OWLAnnotation owlAnnotation) {
@@ -95,6 +51,11 @@ public class CypherOWLObjectWalkerVisitor implements OWLObjectVisitor {
 
     @Override
     public void visit(@Nonnull IRI iri) {
+
+    }
+
+    @Override
+    public void visit(@Nonnull OWLClass owlClass) {
 
     }
 
@@ -205,6 +166,11 @@ public class CypherOWLObjectWalkerVisitor implements OWLObjectVisitor {
 
     @Override
     public void visit(@Nonnull OWLFacetRestriction owlFacetRestriction) {
+
+    }
+
+    @Override
+    public void visit(@Nonnull OWLDatatype owlDatatype) {
 
     }
 
@@ -449,7 +415,17 @@ public class CypherOWLObjectWalkerVisitor implements OWLObjectVisitor {
     }
 
     @Override
+    public void visit(@Nonnull OWLObjectProperty owlObjectProperty) {
+
+    }
+
+    @Override
     public void visit(@Nonnull OWLObjectInverseOf owlObjectInverseOf) {
+
+    }
+
+    @Override
+    public void visit(@Nonnull OWLDataProperty owlDataProperty) {
 
     }
 
@@ -457,6 +433,4 @@ public class CypherOWLObjectWalkerVisitor implements OWLObjectVisitor {
     public void visit(@Nonnull OWLAnnotationProperty owlAnnotationProperty) {
 
     }
-
-
 }
